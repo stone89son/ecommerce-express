@@ -1,5 +1,5 @@
 import ProductModel from "../models/product_model";
-import mongoose from "../mongoose_config";
+import mongoose from "../config/mongoose_config";
 import {Product} from "./dto/product_dto";
 import CreateProductDto from "./dto/createProduct_dto";
 import updateProductDto from "./dto/updateProduct_dto";

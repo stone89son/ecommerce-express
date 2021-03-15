@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction } from "express";
 import shortid from "shortid";
-import mongoose from "../mongoose_config";
+import mongoose from "../config/mongoose_config";
 
 export function handleCreateProduct(req: Request, res: Response, next: NextFunction) {
     try{

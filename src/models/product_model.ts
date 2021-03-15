@@ -1,4 +1,4 @@
-import mongoose from "../mongoose_config";
+import mongoose from "../config/mongoose_config";
 import {Product} from "../product/dto/product_dto";
 
 const schema = new mongoose.Schema({

@@ -1,6 +1,6 @@
 import CategoryModel from "../models/catogory_model"
 import ProductModel from "../models/product_model";
-import mongoose from "../mongoose_config";
+import mongoose from "../config/mongoose_config";
 import CategoryDto from "./dto/category_dto";
 
 export async function getCategory(): Promise<{data?: mongoose.Document<CategoryDto>[], err: boolean}> {
