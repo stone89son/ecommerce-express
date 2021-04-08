@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
     size: Number
 });
 
-const ImageModel = mongoose.model<mongoose.Document<Express.Multer.File>>("library", schema);
+const ImageModel = mongoose.model("libraries", schema);
 
 export default ImageModel;
 

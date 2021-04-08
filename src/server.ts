@@ -9,6 +9,8 @@ const app: express.Application = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(express.static("library"))
+
 app.use(routerProduct);
 app.use(routerCategory);
 app.use(routerLibrary);

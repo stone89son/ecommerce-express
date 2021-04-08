@@ -2,46 +2,48 @@ import {inforOrder} from "./dto/order_dto";
 import billModel from "../models/bill_model";
 import mongoose from "../config/mongoose_config";
 import { updateStatusDto } from "./dto/updateStatus_dto";
+import {Request, Response} from "express";
 
-export async function getBills(): Promise<{data?: mongoose.Document<inforOrder>[],err: boolean}>{
+export async function getBills(req: Request, res: Response): Promise<void>{
     try{
         const data = await billModel.find({});
-        return {data, err: false};
+        res.status(200).json({data});
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Serer has problem, please try again"});
     }
 }
 
-export async function getDetailBills(id: string): Promise<{data?: mongoose.Document<inforOrder> | null, err: boolean}>{
+export async function getDetailBills(req: Request, res: Response): Promise<void>{
     try{
-        const data = await billModel.findById(id).populate("product");
-        return {data, err: false};
+        const data = await billModel.findOne({id: req.params.id}).populate("product");
+        res.status(200).json({data});
     }catch{
-        return {err: true}
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }
-export async function createBill(data: inforOrder): Promise<{err: boolean}> {
+export async function createBill(req: Request, res: Response): Promise<void> {
     try{
-        await billModel.create(data);
-        return {err: false};
+        await billModel.create(req.body);
+        res.status(201).json({message: "Bills is created"})
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"})
     }
 }
-export async function updateStatus(data: updateStatusDto): Promise<{err: boolean}> {
+export async function updateStatus(req: Request, res: Response): Promise<void> {
     try{
-        await billModel.updateOne({id: data}, {status: data.status});
-        return {err: false};
+        const {id, status} = req.body;
+        await billModel.updateOne({id}, {status});
+        res.status(201).json({message: "Status is updated"})
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }
-export async function cancelBill(id: string): Promise<{err: boolean}>{
+export async function cancelBill(req: Request, res: Response): Promise<void>{
     try{
-        await billModel.findByIdAndDelete(id);
-        return {err: false};
+        await billModel.deleteOne({id: req.body.id});
+        res.status(200).json({message: "Bill is cancel"});
     }
     catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }  

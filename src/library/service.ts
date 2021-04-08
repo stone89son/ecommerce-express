@@ -1,25 +1,32 @@
 import mongoose from "../config/mongoose_config";
 import ImageModel from "../models/image_model";
 import fs from "fs";
+import {Request, Response} from "express";
 
-export async function getImage(): Promise<{data?: mongoose.Document<Express.Multer.File>[], err: boolean}> {
+export async function getImage(req: Request, res: Response): Promise<void> {
     try{
         const data = await ImageModel.find({});
-        return {data, err: false};
-    }catch{return {err: true}}
+        res.status(200).json({data});
+    }catch{
+        res.status(500).json({message: "Server has problem, please try again"})
+    }
 }
 
-export async function createImage<T>(data: T): Promise<{err: boolean}> {
+export async function createImage(req: Request, res: Response): Promise<void> {
     try{
-        await ImageModel.insertMany(data);
-        return {err: false};
-    }catch{return {err: true}}
+        await ImageModel.insertMany(req.files);
+        res.status(201).json({message: "Images is added to library"});
+    }catch{
+        res.status(500).json({message: "Server has problem, please try again"})
+    }
 }
 
-export async function deleteImage(path: string): Promise<{err: boolean}> {
+export async function deleteImage(req: Request, res: Response): Promise<void> {
     try{
-        await ImageModel.deleteOne({path});
-        fs.unlinkSync(path);
-        return {err: false}
-    }catch{return {err: true}}
+        await ImageModel.deleteOne({path: req.body.path});
+        fs.unlinkSync(req.body.path);
+        res.status(200).json({message: "Image is removed"})
+    }catch{
+        res.status(500).json({message: "Server has problem, please try again"})
+    }
 }

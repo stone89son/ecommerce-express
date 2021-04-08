@@ -3,70 +3,77 @@ import mongoose from "../config/mongoose_config";
 import {Product} from "./dto/product_dto";
 import CreateProductDto from "./dto/createProduct_dto";
 import updateProductDto from "./dto/updateProduct_dto";
+import { NextFunction, Request, Response } from "express";
 
-export async function getProduct(): Promise<{data?: mongoose.Document<Product>[], err: boolean}> {
+export async function getProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
     try{
-        const data = await ProductModel.find({}).limit(20);
-        return {data, err: false};
+        const data = await ProductModel.find({}).populate("category").limit(20);
+        res.status(200).json({data});
     }catch{
-        return {err: false};
+        res.status(500).json({message: "Server has problem, please try again"})
     }
 }
 
-export async function getProductById(id: string): Promise<{data?: mongoose.Document<Product> | null, err: boolean}> {
+export async function getProductById(req: Request, res: Response, next: NextFunction): Promise<void>{
     try{
-        const data = await ProductModel.findOne({id});
-        return {data, err: false};
+        const data = await ProductModel.findOne({id: req.params.id})
+        .populate({path: "images", select: "path"})
+        .populate("category")
+        res.status(200).json({data});
+        
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"})
     }
 }
 
-export async function getProductByCategory(id: string): Promise<{data?: mongoose.Document<Product>[], err: boolean}>{
+export async function getProductByCategory(req: Request, res: Response): Promise<void>{
     try{
-        const data = await ProductModel.find({category: mongoose.Types.ObjectId(id)})
-        .populate("category");
-        return {data, err: false}
-    }catch{
-        return {err: true}
+        const data = await ProductModel.find({category: mongoose.Types.ObjectId(req.params.category)})
+        .populate("category")
+        res.status(200).json({data});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: "Server has problem, please try again"})
     }
 }
-export async function getPagination(index: number): Promise<{data?: mongoose.Document<Product>[], err: boolean}> {
+export async function getPagination(req: Request, res: Response, next: NextFunction): Promise<void> {
     try{
+        const index = parseInt(req.params.page);
         const start: number = (index - 1) * 20;
         const end: number = start + 20;
         const data = await ProductModel.find({});
-        const result = data.slice(start, end);
-        return {data: result, err: false};
+        const result = ((data.length - start) < 20) ? data.slice(start) : data.slice(start, end);
+        res.status(200).json({data: result});
     }catch{
-        return {err: true}
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }
 
-export async function createProduct(data: CreateProductDto): Promise<{err: boolean}> {
+export async function createProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
     try{
-        await ProductModel.create(data);
-        return{err: false};
+        await ProductModel.create(req.body);
+        res.status(201).json({message: "Product is created"});
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }
 
-export async function updateProduct(data: updateProductDto): Promise<{err: boolean}> {
+export async function updateProduct(req: Request, res: Response, next: NextFunction) {
     try{
-        const newData = data.field === "category" ? mongoose.Types.ObjectId(data.data): data.data
-        await ProductModel.updateOne({id: data.id}, {[data.field]: newData});
-        return {err: false};
+        const {field, data, id} = req.body;
+        const newData = field === "category" ? mongoose.Types.ObjectId(data): data;
+        await ProductModel.updateOne({id}, {[field]: newData});
+        res.status(201).json({message: "Product is updated"})
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }
 
-export async function deleteProduct(id: string): Promise<{err: boolean}> {
+export async function deleteProduct(req: Request, res: Response, next: NextFunction) {
     try{
-        await ProductModel.deleteOne({id});
-        return {err: false};
+        await ProductModel.deleteOne({id: req.body.id})
+        res.status(200).json({message: "Product is removed"});
     }catch{
-        return {err: true};
+        res.status(500).json({message: "Server has problem, please try again"});
     }
 }

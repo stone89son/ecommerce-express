@@ -2,32 +2,41 @@ import CategoryModel from "../models/catogory_model"
 import ProductModel from "../models/product_model";
 import mongoose from "../config/mongoose_config";
 import CategoryDto from "./dto/category_dto";
-
-export async function getCategory(): Promise<{data?: mongoose.Document<CategoryDto>[], err: boolean}> {
+import {Request, Response} from "express";
+export async function getCategory(req: Request, res: Response): Promise<void> {
     try{
-        const categories = await CategoryModel.find({});
-        return {data: categories, err: false};
-    }catch{return {err: true}}
+        const data = await CategoryModel.find({});
+        res.status(200).json({data});
+    }catch{
+        res.status(500).json({message: "Server has problem, please try again"});
+    }
 }
 
-export async function createCategory(data: {name: string}): Promise<{err: boolean}> {
+export async function createCategory(req: Request, res: Response): Promise<void> {
     try{
-        await CategoryModel.create(data);
-        return {err: false};
-    }catch{return {err: true}}
+        await CategoryModel.create(req.body);
+        res.status(201).json({message: "Category is created"});
+    }catch{
+        res.status(500).json({message: "Server has problem, please try again"});
+    }
 }
 
-export async function updateCategory(data: {id: string, name: string}): Promise<{err: boolean}> {
+export async function updateCategory(req: Request, res: Response): Promise<void> {
     try{
-        await CategoryModel.findByIdAndUpdate(data.id, {name: data.name});
-        return {err: false}
-    }catch{return {err: true}}
+        const {id, name} = req.body;
+        await CategoryModel.updateOne({id}, {name});
+        res.status(201).json({message: "Category is updated"});
+    }catch{
+        res.status(500).json({message: "Server has problem, please try again"});
+    }
 }
 
-export async function deleteCategory(id: string): Promise<{err: boolean}> {
+export async function deleteCategory(req: Request, res: Response): Promise<void> {
     try{
-        await ProductModel.updateMany({category: mongoose.Types.ObjectId(id)}, {category: null});
-        await CategoryModel.findByIdAndDelete(id);
-        return {err: false};
-    }catch{return {err: true}}
+        await ProductModel.updateMany({category: mongoose.Types.ObjectId(req.body.id)}, {category: null});
+        await CategoryModel.findByIdAndDelete(req.body.id);
+        res.status(200).json({message: "Category is removed"});
+    }catch{
+        res.status(500).json({messgae: "Server has problem, please try again"});
+    }
 }

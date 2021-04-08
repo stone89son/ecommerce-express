@@ -3,13 +3,14 @@ import { inforOrder } from "../order/dto/order_dto";
 
 const schema = new mongoose.Schema<mongoose.Document<inforOrder>>({
     id: String,
-    email: String,
-    phoneNumber: String,
-    address: String,
-    note: String,
+    email: {type: String, required: true},
+    phoneNumber: {type: String, required: true},
+    address: {type: String, required: true},
+    note: {type: String, required: true},
     product: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "bills"
+        ref: "products",
+        required: true
     },
     status: String
 })
