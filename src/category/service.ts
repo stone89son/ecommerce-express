@@ -5,7 +5,7 @@ import CategoryDto from "./dto/category_dto";
 import {Request, Response} from "express";
 export async function getCategory(req: Request, res: Response): Promise<void> {
     try{
-        const data = await CategoryModel.find({});
+        const data: CategoryDto[] = await CategoryModel.find({});
         res.status(200).json({data});
     }catch{
         res.status(500).json({message: "Server has problem, please try again"});

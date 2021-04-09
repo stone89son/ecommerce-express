@@ -1,12 +1,10 @@
-import {inforOrder} from "./dto/order_dto";
 import billModel from "../models/bill_model";
-import mongoose from "../config/mongoose_config";
-import { updateStatusDto } from "./dto/updateStatus_dto";
 import {Request, Response} from "express";
+import { inforOrder } from "./dto/order_dto";
 
 export async function getBills(req: Request, res: Response): Promise<void>{
     try{
-        const data = await billModel.find({});
+        const data: inforOrder[] | [] = await billModel.find({});
         res.status(200).json({data});
     }catch{
         res.status(500).json({message: "Serer has problem, please try again"});
@@ -15,7 +13,7 @@ export async function getBills(req: Request, res: Response): Promise<void>{
 
 export async function getDetailBills(req: Request, res: Response): Promise<void>{
     try{
-        const data = await billModel.findOne({id: req.params.id}).populate("product");
+        const data: inforOrder | null = await billModel.findOne({id: req.params.id}).populate("product");
         res.status(200).json({data});
     }catch{
         res.status(500).json({message: "Server has problem, please try again"});

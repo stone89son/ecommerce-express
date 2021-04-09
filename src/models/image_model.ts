@@ -1,3 +1,4 @@
+import multer from "multer";
 import mongoose from "../config/mongoose_config";
 
 const schema = new mongoose.Schema({

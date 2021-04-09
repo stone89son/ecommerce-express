@@ -5,6 +5,6 @@ const schema = new mongoose.Schema({
     name: {type: String, required: true},
 })
 
-const CategoryModel = mongoose.model<mongoose.Document<CategoryDto>>("categories", schema);
+const CategoryModel = mongoose.model("categories", schema);
 
 export default CategoryModel

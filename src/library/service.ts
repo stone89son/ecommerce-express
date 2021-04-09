@@ -5,7 +5,7 @@ import {Request, Response} from "express";
 
 export async function getImage(req: Request, res: Response): Promise<void> {
     try{
-        const data = await ImageModel.find({});
+        const data: Express.Multer.File[] = await ImageModel.find({});
         res.status(200).json({data});
     }catch{
         res.status(500).json({message: "Server has problem, please try again"})

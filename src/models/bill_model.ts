@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { inforOrder } from "../order/dto/order_dto";
 
-const schema = new mongoose.Schema<mongoose.Document<inforOrder>>({
+const schema = new mongoose.Schema({
     id: String,
     email: {type: String, required: true},
     phoneNumber: {type: String, required: true},
@@ -15,6 +15,6 @@ const schema = new mongoose.Schema<mongoose.Document<inforOrder>>({
     status: String
 })
 
-const billModel = mongoose.model<mongoose.Document<inforOrder>>("bills", schema);
+const billModel = mongoose.model("bills", schema);
 
 export default billModel;
